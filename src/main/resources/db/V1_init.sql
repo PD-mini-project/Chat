@@ -23,8 +23,8 @@ create table chatroom (
     description varchar(255) default "",
     create_at datetime default current_timestamp,
     modify_at datetime default current_timestamp,
-    user_id bigint not null,
-    foreign key (user_id) references user (id)
+    host_id bigint not null,
+    foreign key (host_id) references user (id)
 ) engine=InnoDB;
 
 create table categories (
