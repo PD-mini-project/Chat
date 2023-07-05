@@ -1,4 +1,4 @@
-package com.chatting.room.global.config;
+package com.chatting.room.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
