@@ -28,6 +28,19 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public boolean withdrawUser() {
+        String username = (String) httpSession.getAttribute("username");
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            userRepository.delete(user);
+            httpSession.removeAttribute("username");
+            return true;
+        }
+        return false;
+    }
+
+
     public boolean loginUser(UserLoginDto userLoginDto) {
         String username = userLoginDto.getUsername();
         String password = userLoginDto.getPassword();
@@ -63,5 +76,15 @@ public class UserService {
         return users.stream()
                 .map(user -> new UserRespDto(user.getUsername(), user.getDescription()))
                 .collect(Collectors.toList());
+    }
+
+
+    public void resetPassword(String username, String newPassword) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setPassword(newPassword);
+            userRepository.save(user);
+        }
     }
 }
