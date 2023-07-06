@@ -3,6 +3,8 @@ package com.chatting.room.user.domain;
 import com.chatting.room.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.mapping.List;
+import org.hibernate.validator.constraints.Length;
 
 
 @Entity
@@ -15,14 +17,19 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username", unique = true, nullable = false)
+    @Length( max = 20)
     private String username;
 
-    @Column(name = "password", unique = true)
+    @Column(name = "password")
+    @Length(max = 225)
     private String password;
 
     @Column(name = "description")
+    @Length(max = 255)
     private String description;
+
+
 
     public User(Long id, String username, String password, String description) {
         this.id = id;
