@@ -24,7 +24,7 @@ public class ControllerAdvice {
     public ResponseEntity<ErrorResponse> methodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.info(String.format("MethodArgumentNotValidException : %s", e));
         String errorCode = ExceptionType.METHOD_ARG_NOT_VALID_EXCEPTION.getErrorCode();
-        String message = e.getAllErrors().get(0).getDefaultMessage();
+        String message = ExceptionType.METHOD_ARG_NOT_VALID_EXCEPTION.getErrorMessage();
 
         return ResponseEntity.badRequest().body(new ErrorResponse(errorCode, message));
     }
