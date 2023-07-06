@@ -1,12 +1,16 @@
 package com.chatting.room.chatroom.application;
 
+import com.chatting.room.chatroom.domain.Categories;
 import com.chatting.room.chatroom.domain.ChatRoom;
+import com.chatting.room.chatroom.domain.Chatroom_Categories;
 import com.chatting.room.chatroom.dto.request.CreateChatRoomRequest;
 import com.chatting.room.chatroom.dto.request.UpdateChatRoomRequest;
 import com.chatting.room.chatroom.dto.response.ChatRoomRespDto;
+import com.chatting.room.chatroom.repository.CategoriesRepository;
 import com.chatting.room.chatroom.repository.ChatRoomRepository;
 import com.chatting.room.user.domain.User;
 import com.chatting.room.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
@@ -67,6 +72,7 @@ public class ChatRoomService {
                 updatedChatRoom.getUser().getUsername()
         );
     }
+
 
     private List<ChatRoomRespDto> convertToDtoList(List<ChatRoom> chatRooms) {
         return chatRooms.stream()
