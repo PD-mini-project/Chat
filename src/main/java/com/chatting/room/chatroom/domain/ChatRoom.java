@@ -11,12 +11,14 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Length;
 
+
 @Entity
 @Builder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "chat_room")
 public class ChatRoom extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,10 +30,9 @@ public class ChatRoom extends BaseEntity {
     @Column(name = "description")
     @Length(max = 255)
     private String description;
+
     @OnDelete(action = OnDeleteAction.CASCADE)
-    // 유저가 없어지면 채팅방이 업어지도록
-    @ManyToOne(fetch = FetchType.LAZY)
-    // 외래키 매핑
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -41,6 +42,4 @@ public class ChatRoom extends BaseEntity {
         this.description = description;
         this.user = user;
     }
-
 }
-
