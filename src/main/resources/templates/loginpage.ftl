@@ -4,6 +4,30 @@
     <title>Login Page</title>
     <style>
         /* CSS styles here */
+
+        .name {
+            color:#FFFFFF;
+            text-align: center;
+            font-size: 60px;
+        }
+
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .box {
+            display: flex;
+            justify-content: center;
+            background: rgba(34, 34, 34, 0.6);
+            width: 500px;
+            padding: 10
+            px;
+        }
+
         body {
             background: #2c2c2c;
             font-family: "Raleway";
@@ -98,7 +122,13 @@
     </style>
 </head>
 <body>
-<h1>Login Page</h1>
+<div class="container">
+    <div class="box">
+        <img src="https://steamuserimages-a.akamaihd.net/ugc/2055373930157017253/8363DAB489ECF4B57F27F7272969DEC8E0C4C920/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true" autoplay loop muted style="width: 00px; height: auto;" </img>
+
+        <h1 class="Name">Happy Chat</h1>
+    </div>
+</div>
 <div class="form">
     <div class="form-header">
         <div class="show-signup">SignUp</div>
@@ -123,6 +153,8 @@
         </div>
     </div>
 </div>
+
+
 
 <script>
     function resetClass(element, classname) {

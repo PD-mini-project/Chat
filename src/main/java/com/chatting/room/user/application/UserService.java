@@ -55,6 +55,12 @@ public class UserService {
         return false;
     }
 
+    public void logoutUser() {
+        httpSession.removeAttribute("username");
+    }
+
+
+
     public UserRespDto getUserInfo() {
         String username = (String) httpSession.getAttribute("username");
         Optional<User> optionalUser = userRepository.findByUsername(username);
