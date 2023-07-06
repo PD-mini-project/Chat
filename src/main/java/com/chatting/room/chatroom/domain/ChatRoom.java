@@ -8,6 +8,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.Collection;
+
 
 @Entity
 @Builder
@@ -40,4 +42,5 @@ public class ChatRoom extends BaseEntity {
         this.description = description;
         this.user = user;
     }
+
 }

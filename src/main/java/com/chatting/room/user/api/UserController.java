@@ -3,6 +3,7 @@ package com.chatting.room.user.api;
 import com.chatting.room.user.application.UserService;
 import com.chatting.room.user.dto.request.UserLoginDto;
 import com.chatting.room.user.dto.request.UserReq;
+import com.chatting.room.user.dto.request.UserResetPasswordDto;
 import com.chatting.room.user.dto.response.UserRespDto;
 
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,17 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @DeleteMapping("/withdraw")
+    public ResponseEntity withdrawUser() {
+        boolean withdrawn = userService.withdrawUser();
+        if (withdrawn) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+
     @PostMapping("/login")
     public ResponseEntity loginUser(@RequestBody UserLoginDto userLoginDto) {
         boolean loggedIn = userService.loginUser(userLoginDto);
@@ -36,6 +48,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
 
     @GetMapping("/info")
     public ResponseEntity<UserRespDto> getUserInfo() {
@@ -58,4 +71,15 @@ public class UserController {
         List<UserRespDto> userList = userService.getUserList();
         return ResponseEntity.status(HttpStatus.OK).body(userList);
     }
+
+    @PostMapping("/resetpassword")
+    public ResponseEntity resetPassword(@RequestBody UserResetPasswordDto resetPasswordDto) {
+        String username = resetPasswordDto.getUsername();
+        String newPassword = resetPasswordDto.getNewPassword();
+        userService.resetPassword(username, newPassword);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+
 }

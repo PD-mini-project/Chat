@@ -1,13 +1,17 @@
 package com.chatting.room.chatroom.application;
 
+
 import com.chatting.room.chatroom.domain.ChatRoom;
+
 import com.chatting.room.chatroom.dto.request.CreateChatRoomRequest;
 import com.chatting.room.chatroom.dto.request.UpdateChatRoomRequest;
+import com.chatting.room.chatroom.dto.response.CategoryRespDto;
 import com.chatting.room.chatroom.dto.response.ChatRoomRespDto;
+
 import com.chatting.room.chatroom.repository.ChatRoomRepository;
 import com.chatting.room.user.domain.User;
 import com.chatting.room.user.repository.UserRepository;
-import org.hibernate.sql.Update;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
@@ -64,7 +69,8 @@ public class ChatRoomService {
                 updatedChatRoom.getTitle(),
                 updatedChatRoom.getDescription(),
                 updatedChatRoom.getUser().getId(),
-                updatedChatRoom.getUser().getUsername()
+                updatedChatRoom.getUser().getUsername(),
+                (List<CategoryRespDto>) updatedChatRoom.getUser()
         );
     }
 
@@ -75,7 +81,9 @@ public class ChatRoomService {
                         chatRoom.getTitle(),
                         chatRoom.getDescription(),
                         chatRoom.getUser().getId(),
-                        chatRoom.getUser().getUsername()
+                        chatRoom.getUser().getUsername(),
+                        (List<CategoryRespDto>) chatRoom.getUser()
+
                 ))
                 .collect(Collectors.toList());
     }
