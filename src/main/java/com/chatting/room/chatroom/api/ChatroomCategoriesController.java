@@ -1,47 +1,56 @@
 package com.chatting.room.chatroom.api;
 
 import com.chatting.room.chatroom.application.ChatroomCategoriesService;
+import com.chatting.room.chatroom.domain.Categories;
+import com.chatting.room.chatroom.domain.ChatRoom;
 import com.chatting.room.chatroom.domain.Chatroom_Categories;
+import com.chatting.room.chatroom.dto.response.CategoryRespDto;
+import com.chatting.room.chatroom.dto.response.ChatRoomRespDto;
+import com.chatting.room.chatroom.repository.CategoriesRepository;
+import com.chatting.room.chatroom.repository.ChatRoomRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api/chatroom/categories")
 public class ChatroomCategoriesController {
     private final ChatroomCategoriesService chatroomCategoriesService;
+    private final ChatRoomRepository chatRoomRepository;
+    private final CategoriesRepository categoriesRepository;
 
-    public ChatroomCategoriesController(ChatroomCategoriesService chatroomCategoriesService) {
+    public ChatroomCategoriesController(ChatroomCategoriesService chatroomCategoriesService, ChatRoomRepository chatRoomRepository, CategoriesRepository categoriesRepository) {
         this.chatroomCategoriesService = chatroomCategoriesService;
+        this.chatRoomRepository = chatRoomRepository;
+        this.categoriesRepository = categoriesRepository;
     }
 
-
-    @GetMapping("/{chatroomId}")
-    public ResponseEntity<List<Chatroom_Categories>> getChatroomCategories(@PathVariable("chatroomId") Long chatroomId) {
-        List<Chatroom_Categories> categories = (List<Chatroom_Categories>) chatroomCategoriesService.getChatroomCategories(chatroomId);
-        return ResponseEntity.ok(categories);
-    }
-
-    @PostMapping
-    public ResponseEntity<Chatroom_Categories> createChatroomCategories(@RequestBody Chatroom_Categories chatroomCategories) {
-        Chatroom_Categories createdCategories = chatroomCategoriesService.createChatroomCategories(chatroomCategories);
-        return ResponseEntity.ok(createdCategories);
-    }
-
-    @PutMapping("/{chatroomId}/{categoryId}")
-    public ResponseEntity<Void> updateChatroomCategories(
-            @PathVariable("chatroomId") Long chatroomId,
+    // 채팅방과 카테고리 연결
+    @PostMapping("/{chatRoomId}/categories/{categoryId}")
+    public ResponseEntity<Void> linkChatRoomWithCategory(
+            @PathVariable("chatRoomId") Long chatRoomId,
             @PathVariable("categoryId") Long categoryId) {
-        chatroomCategoriesService.updateChatroomCategories(chatroomId, categoryId);
-        return ResponseEntity.noContent().build();
+        chatroomCategoriesService.linkChatRoomWithCategory(chatRoomId, categoryId);
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{chatroomId}/{categoryId}")
-    public ResponseEntity<Void> deleteChatroomCategories(
-            @PathVariable("chatroomId") Long chatroomId,
+    // 채팅방과 카테고리 연결 해제
+    @DeleteMapping("/{chatRoomId}/categories/{categoryId}")
+    public ResponseEntity<Void> unlinkChatRoomWithCategory(
+            @PathVariable("chatRoomId") Long chatRoomId,
             @PathVariable("categoryId") Long categoryId) {
-        chatroomCategoriesService.deleteChatroomCategories(chatroomId, categoryId);
-        return ResponseEntity.noContent().build();
+        chatroomCategoriesService.unlinkChatRoomWithCategory(chatRoomId, categoryId);
+        return ResponseEntity.ok().build();
     }
+
+    // 채팅방 목록과 카테고리 조회 (조인)
+
+
+    // 채팅방 상세 조회와 카테고리 조회 (조인)
+
+
+
 }

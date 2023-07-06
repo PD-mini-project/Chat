@@ -2,26 +2,22 @@ package com.chatting.room.chatroom.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
+
 
 @Entity
-@Builder
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "categories")
 public class Categories {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "title", nullable = false)
-    @Length(max = 255)
+    @Column(nullable = false, unique = true)
     private String title;
 
-
-    public Categories(Long id, String title) {
-        this.id = id;
+    public Categories(String title) {
         this.title = title;
     }
 }

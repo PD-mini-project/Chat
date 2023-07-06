@@ -9,6 +9,4 @@ import java.util.Optional;
 public interface ChatroomCategoriesRepository extends JpaRepository<Chatroom_Categories, Long> {
     void deleteById(Chatroom_Categories.ChatroomCategoriesId chatroomCategoriesId);
 
-
-    Optional<Chatroom_Categories> findById(Chatroom_Categories.ChatroomCategoriesId chatroomCategoriesId);
 }
