@@ -1,25 +1,30 @@
 package com.chatting.room.chatroom.dto.response;
 
-
 import lombok.Getter;
+import org.hibernate.validator.constraints.Length;
+
+import java.util.List;
 
 @Getter
 public class ChatRoomRespDto {
-    private final Long chatRoomId;
-
+    private final Long id;
+    @Length(max = 255)
     private final String title;
-
+    @Length(max = 255)
     private final String description;
 
-    private final Long userId;
+    private Long userId;
+    private String username;
 
-    private final String username;
-
-    public ChatRoomRespDto(Long chatRoomId, String title, String description, Long userId, String username) {
-        this.chatRoomId = chatRoomId;
+    public ChatRoomRespDto(Long id, String title, String description, Long userId, String username, List<CategoryRespDto> categories) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.userId = userId;
         this.username = username;
+        this.categories = categories;
     }
+
+    private final List<CategoryRespDto> categories;
+
 }

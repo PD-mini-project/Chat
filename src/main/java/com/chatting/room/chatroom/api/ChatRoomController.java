@@ -45,5 +45,4 @@ public class ChatRoomController {
         ChatRoomRespDto updatedChatRoom = chatRoomService.updateChatRoom(chatRoomId, request);
         return ResponseEntity.ok(Collections.singletonList(updatedChatRoom));
     }
-
 }
