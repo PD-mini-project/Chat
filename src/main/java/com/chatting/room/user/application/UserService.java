@@ -1,6 +1,7 @@
 package com.chatting.room.user.application;
 
 import com.chatting.room.user.dto.response.UserRespDto;
+import com.chatting.room.user.exception.UserNotFoundException;
 import com.chatting.room.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,17 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    // 샘플
+    // 테스트
     public List<UserRespDto> userList() {
         return userRepository.findAll()
                 .stream()
                 .map(user -> new UserRespDto(user.getUsername(), user.getDescription()))
                 .collect(Collectors.toList());
+    }
+
+    // 테스트
+    public UserRespDto findUser(Long id) {
+        return userRepository.findById(id).map(user -> new UserRespDto(user.getUsername(), user.getDescription()))
+                .orElseThrow(UserNotFoundException::new);
     }
 }
