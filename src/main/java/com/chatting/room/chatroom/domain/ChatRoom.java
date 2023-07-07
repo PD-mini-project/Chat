@@ -8,19 +8,20 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.Collection;
+import static lombok.EqualsAndHashCode.*;
 
 
 @Entity
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "chat_room")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class ChatRoom extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Include
     private Long id;
 
     @Column(name = "title", nullable = false)
