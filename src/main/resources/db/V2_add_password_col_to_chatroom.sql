@@ -1,1 +1,0 @@
-alter table chatroom add password varchar(4) after 'description';

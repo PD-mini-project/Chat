@@ -21,6 +21,7 @@ create table chatroom (
     id bigint auto_increment primary key,
     title varchar(255) not null,
     description varchar(255) default "",
+    password varchar(4),
     create_at datetime default current_timestamp,
     modify_at datetime default current_timestamp,
     user_id bigint not null,

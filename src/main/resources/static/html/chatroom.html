@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta>
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="/static/css/chatroom.css">
+</head>
+<body>
+<div class="chat-container">
+    <div class="chat-header">
+        <h1>Chat Room</h1>
+    </div>
+    <ul id="chat-room-list"></ul>
+    <form id="create-chat-room-form">
+        <input type="text" id="title-input" placeholder="Title">
+        <input type="text" id="description-input" placeholder="Description">
+        <button type="submit" @click ="createChatRoom">Create</button>
+    </form>
+</div>
+<script src="/static/js/chatroom.js"></script>
+</body>
+</html>

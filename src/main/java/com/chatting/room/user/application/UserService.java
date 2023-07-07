@@ -1,16 +1,21 @@
 package com.chatting.room.user.application;
 
+import com.chatting.room.common.exception.UnAuthorizedException;
+import com.chatting.room.common.redis.RedisService;
 import com.chatting.room.user.domain.User;
 import com.chatting.room.user.dto.request.UserLoginRequest;
 import com.chatting.room.user.dto.request.UserCreateRequest;
+import com.chatting.room.user.dto.request.UserUpdateRequest;
 import com.chatting.room.user.dto.response.UserResponse;
+import com.chatting.room.user.exception.*;
 import com.chatting.room.user.repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,56 +23,131 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final HttpSession httpSession;
+    private final RedisService redisService;
 
-    public UserService(UserRepository userRepository, HttpSession httpSession) {
+    public UserService(UserRepository userRepository, com.chatting.room.common.redis.RedisService redisService) {
         this.userRepository = userRepository;
-        this.httpSession = httpSession;
+        this.redisService = redisService;
+    }
+
+    private static final int USERNAME_LENGTH = 20;
+    private static final int PASSWORD_LENGTH = 255;
+    private static final int DESCRIPTION_LENGTH = 255;
+
+    // 저장된 유저의 pk값 반환
+    @Transactional
+    public Long createUser(UserCreateRequest request) {
+        String username = request.getUsername();
+        String password = request.getPassword();
+        String description = request.getDescription();
+
+        validateUsername(username);
+        validateUsernameDuplicate(username);
+        validatePassword(password);
+        validateDescription(description);
+
+        User user = UserCreateRequest.toEntity(request);
+
+        return userRepository.save(user).getId();
+    }
+
+    public UserResponse loginUser(UserLoginRequest request) {
+        String username = request.getUsername();
+        String password = request.getPassword();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(UserNotFoundException::new);
+
+        user.isSameUsernameAndPassword(username, password);
+
+        // Redis에 사용자 정보 저장
+        redisService.saveUserInfo(user.getId().toString(), Map.of("id", user.getId(), "username", user.getUsername()));
+
+        return UserResponse.from(user);
     }
 
     @Transactional
-    public void registerUser(UserCreateRequest userReq) {
-        User user = new User(null, userReq.getUsername(), userReq.getPassword(), userReq.getDescription());
-        userRepository.save(user);
+    public Long deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        checkAuthorize(userId, user);
+
+        userRepository.deleteById(user.getId());
+
+        return user.getId();
     }
 
-    public boolean loginUser(UserLoginRequest userLoginRequest) {
-        String username = userLoginRequest.getUsername();
-        String password = userLoginRequest.getPassword();
+    public UserResponse userInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
 
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (user.getPassword().equals(password)) {
-                httpSession.setAttribute("username", username);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public UserResponse getUserInfo() {
-        String username = (String) httpSession.getAttribute("username");
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        return optionalUser.map(user -> new UserResponse(user.getUsername(), user.getDescription()))
-                .orElse(null);
+        return UserResponse.from(user);
     }
 
     @Transactional
-    public void updateUserInfo(UserCreateRequest userReq) {
-        String username = (String) httpSession.getAttribute("username");
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        optionalUser.ifPresent(user -> {
-            user.updatePassword(userReq.getPassword());
-            user.updateDescription(userReq.getDescription());
-        });
+    public void updateUserInfo(UserUpdateRequest request) {
+        Long userId = request.getId();
+        String newUsername = request.getNewUsername();
+        String newPassword = request.getNewPassword();
+        String newDescription = request.getNewDescription();
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        checkAuthorize(userId, user);
+
+        validateUsername(newUsername);
+        validateUsernameDuplicate(newUsername);
+        validatePassword(newPassword);
+        validateDescription(newDescription);
+
+        user.updateUserInfo(newUsername, newPassword, newDescription);
     }
 
     public List<UserResponse> getUserList() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map(user -> new UserResponse(user.getUsername(), user.getDescription()))
+                .map(UserResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    private void validateUsername(String username) {
+        if (Objects.isNull(username)) {
+            throw new UserNameNullException();
+        }
+
+        if (username.length() > USERNAME_LENGTH) {
+            throw new UserNameLengthException();
+        }
+    }
+
+    private void validateUsernameDuplicate(String username) {
+        boolean isExist = userRepository.existsByUsername(username);
+        if (isExist) {
+            throw new UserNameDuplicateException();
+        }
+    }
+
+    private void validatePassword(String password) {
+        if (Objects.isNull(password)) {
+            throw new UserPasswordNullException();
+        }
+
+        if (password.length() > PASSWORD_LENGTH) {
+            throw new UserPasswordLengthException();
+        }
+    }
+
+    private void validateDescription(String description) {
+        if (description.length() > DESCRIPTION_LENGTH) {
+            throw new UserDescriptionLengthException();
+        }
+    }
+
+    private static void checkAuthorize(Long userId, User user) {
+        if (!user.isSameUser(userId)) {
+            throw new UnAuthorizedException();
+        }
     }
 }

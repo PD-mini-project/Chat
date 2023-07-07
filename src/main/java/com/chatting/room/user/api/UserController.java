@@ -3,6 +3,7 @@ package com.chatting.room.user.api;
 import com.chatting.room.user.application.UserService;
 import com.chatting.room.user.dto.request.UserLoginRequest;
 import com.chatting.room.user.dto.request.UserCreateRequest;
+import com.chatting.room.user.dto.request.UserUpdateRequest;
 import com.chatting.room.user.dto.response.UserResponse;
 
 import jakarta.validation.Valid;
@@ -24,43 +25,49 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<Void> registerUser(@RequestBody @Valid UserCreateRequest userReq) {
-        userService.registerUser(userReq);
+    @PostMapping("/create")
+    public ResponseEntity<Long> createUser(@RequestBody @Valid UserCreateRequest userReq) {
+        Long savedUserId = userService.createUser(userReq);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUserId);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> loginUser(@RequestBody @Valid UserLoginRequest userLoginRequest) {
-        boolean loggedIn = userService.loginUser(userLoginRequest);
+    public ResponseEntity<UserResponse> loginUser(@RequestBody @Valid UserLoginRequest request) {
+        UserResponse userResponse = userService.loginUser(request);
 
-        if (loggedIn) {
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
-    @GetMapping("/info")
-    public ResponseEntity<UserResponse> getUserInfo() {
-        UserResponse userResponse = userService.getUserInfo();
-        if (userResponse != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(userResponse);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    // 권한 인증 애노테이션 필요 @Authentication
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Long> deleteUser(@PathVariable Long id) {
+        Long userId = userService.deleteUser(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userId);
     }
 
+    // 권한 인증 애노테이션 필요 @Authentication
+    @GetMapping("/info/{id}")
+    public ResponseEntity<UserResponse> userInfo(@PathVariable Long id) {
+        UserResponse userResponse = userService.userInfo(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
+    }
+
+    // 권한 인증 애노테이션 필요 @Authentication
     @PutMapping("/update")
-    public ResponseEntity<Void> updateUserInfo(@RequestBody @Valid UserCreateRequest userReq) {
-        userService.updateUserInfo(userReq);
+    public ResponseEntity<Void> updateUserInfo(@RequestBody @Valid UserUpdateRequest request) {
+        userService.updateUserInfo(request);
+
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    // 권한 인증 애노테이션 필요 @Authentication
     @GetMapping("/users")
     public ResponseEntity<List<UserResponse>> getUserList() {
         List<UserResponse> userList = userService.getUserList();
+
         return ResponseEntity.status(HttpStatus.OK).body(userList);
     }
 }

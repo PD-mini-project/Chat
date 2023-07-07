@@ -1,15 +1,8 @@
-package com.chatting.room.chatroom.domain;
+package com.chatting.room.chatroom.dto.request;
 
-import com.chatting.room.common.domain.BaseEntity;
-import com.chatting.room.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Length;
-
-import java.util.Collection;
-
 
 @Entity
 @Builder
@@ -17,7 +10,7 @@ import java.util.Collection;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "chat_room")
-public class ChatRoom extends BaseEntity {
+public class UpdateChatRoomRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,16 +24,9 @@ public class ChatRoom extends BaseEntity {
     @Length(max = 255)
     private String description;
 
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    public ChatRoom(Long id, String title, String description, User user) {
+    public UpdateChatRoomRequest(Long id, String title, String description) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.user = user;
     }
-
 }
