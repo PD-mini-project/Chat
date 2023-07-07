@@ -49,6 +49,12 @@ public class UserController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity logoutUser() {
+        userService.logoutUser();
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
 
     @GetMapping("/info")
     public ResponseEntity<UserRespDto> getUserInfo() {
