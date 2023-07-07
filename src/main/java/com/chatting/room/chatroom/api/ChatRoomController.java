@@ -20,7 +20,7 @@ public class ChatRoomController {
     public ChatRoomController(ChatRoomService chatRoomService) {
         this.chatRoomService = chatRoomService;
     }
-
+  
     @PostMapping("/create")
     public ResponseEntity<ChatRoomResponse> createChatRoom(
             @RequestBody CreateChatRoomRequest request,
@@ -36,6 +36,7 @@ public class ChatRoomController {
         chatRoomService.deleteChatRoom(chatRoomId);
         return ResponseEntity.noContent().build();
     }
+  
     @PutMapping("/update/{id}")
     public ResponseEntity<List<ChatRoomResponse>> updateChatRoom(
             @PathVariable("id") Long chatRoomId,
