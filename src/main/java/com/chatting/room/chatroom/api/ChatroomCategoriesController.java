@@ -1,18 +1,10 @@
 package com.chatting.room.chatroom.api;
 
 import com.chatting.room.chatroom.application.ChatroomCategoriesService;
-import com.chatting.room.chatroom.domain.Categories;
-import com.chatting.room.chatroom.domain.ChatRoom;
-import com.chatting.room.chatroom.domain.Chatroom_Categories;
-import com.chatting.room.chatroom.dto.response.CategoryRespDto;
-import com.chatting.room.chatroom.dto.response.ChatRoomRespDto;
-import com.chatting.room.chatroom.repository.CategoriesRepository;
+import com.chatting.room.chatroom.repository.CategoryRepository;
 import com.chatting.room.chatroom.repository.ChatRoomRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -20,12 +12,12 @@ import java.util.stream.Collectors;
 public class ChatroomCategoriesController {
     private final ChatroomCategoriesService chatroomCategoriesService;
     private final ChatRoomRepository chatRoomRepository;
-    private final CategoriesRepository categoriesRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ChatroomCategoriesController(ChatroomCategoriesService chatroomCategoriesService, ChatRoomRepository chatRoomRepository, CategoriesRepository categoriesRepository) {
+    public ChatroomCategoriesController(ChatroomCategoriesService chatroomCategoriesService, ChatRoomRepository chatRoomRepository, CategoryRepository categoryRepository) {
         this.chatroomCategoriesService = chatroomCategoriesService;
         this.chatRoomRepository = chatRoomRepository;
-        this.categoriesRepository = categoriesRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     // 채팅방과 카테고리 연결

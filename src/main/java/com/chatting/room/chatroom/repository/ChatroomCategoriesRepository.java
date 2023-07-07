@@ -2,11 +2,9 @@ package com.chatting.room.chatroom.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.chatting.room.chatroom.domain.Chatroom_Categories;
+import com.chatting.room.chatroom.domain.Chatroom_Category;
 
-import java.util.Optional;
-
-public interface ChatroomCategoriesRepository extends JpaRepository<Chatroom_Categories, Long> {
-    void deleteById(Chatroom_Categories.ChatroomCategoriesId chatroomCategoriesId);
+public interface ChatroomCategoriesRepository extends JpaRepository<Chatroom_Category, Long> {
+    void deleteById(Chatroom_Category.ChatroomCategoriesId chatroomCategoriesId);
 
 }

@@ -1,45 +1,31 @@
 package com.chatting.room.chatroom.dto.request;
 
-import com.chatting.room.common.domain.BaseEntity;
+import com.chatting.room.chatroom.domain.ChatRoom;
 import com.chatting.room.user.domain.User;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.validator.constraints.Length;
 
 
-@Entity
-@Builder
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "chat_room")
-public class CreateChatRoomRequest  extends BaseEntity {
+public class CreateChatRoomRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private final String title;
 
-    @Column(name = "title", nullable = false)
-    @Length(max = 255)
-    private String title;
+    private final String description;
 
-    @Column(name = "description")
-    @Length(max = 255)
-    private String description;
+    private final String categories;
 
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    public CreateChatRoomRequest(Long id, String title, String description, User user) {
-        this.id = id;
+    public CreateChatRoomRequest(String title, String description, String categories) {
         this.title = title;
         this.description = description;
-        this.user = user;
+        this.categories = categories;
+    }
+
+    public static ChatRoom toEntity(CreateChatRoomRequest request, User user) {
+        return ChatRoom.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .user(user)
+                .build();
     }
 }

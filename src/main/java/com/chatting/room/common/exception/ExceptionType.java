@@ -1,9 +1,6 @@
 package com.chatting.room.common.exception;
 
-import com.chatting.room.chatroom.execption.CategoryNullException;
-import com.chatting.room.chatroom.execption.ChatRoomNotFoundException;
-import com.chatting.room.chatroom.execption.ChatRoomPasswordException;
-import com.chatting.room.chatroom.execption.ChatRoomTitleNullException;
+import com.chatting.room.chatroom.execption.*;
 import com.chatting.room.user.exception.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +20,7 @@ public enum ExceptionType {
     USERNAME_LENGTH_EXCEPTION("003", "유저 이름은 20자를 초과할 수 없습니다.", UserNameLengthException.class),
     USERNAME_DUPLICATE_EXCEPTION("004", "이미 존재하는 유저 이름입니다.", UserNameDuplicateException.class),
     USER_PASSWORD_NULL_EXCEPTION("005", "유저 비밀번호는 1자 이상이어야 합니다", UserPasswordNullException.class),
-    USER_PASSWORD_LENGTH_EXCEPTION("006", "유저 비밀번호는 1자 이상이어야 합니다", UserPasswordLengthException.class),
+    USER_PASSWORD_LENGTH_EXCEPTION("006", "유저 비밀번호는 255자 이하여야 합니다", UserPasswordLengthException.class),
     USER_DESCRIPTION_LENGTH_EXCEPTION("007", "유저 소개글은 255자 이하여야 합니다.", UserDescriptionLengthException.class),
 
     // 권한에 관련된 모든 예외처리 예를 들어 방 생성(로그인), 방 삭제(로그인, 주인), 방 입장(로그인), 로그인정보 없음, 유저 정보 수정, 채팅방 정보 수정
@@ -33,14 +30,17 @@ public enum ExceptionType {
     CHATROOM_PASSWORD_EXCEPTION("010", "채팅방 비밀번호가 일치하지 않습니다.", ChatRoomPasswordException.class),
     CHATROOM_PASSWORD_LENGTH_EXCEPTION("011", "채팅방 비밀번호는 4자 이하여야 합니다.", UserPasswordLengthException.class),
     CHATROOM_TITLE_NULL_EXCEPTION("012", "채팅방 제목은 1자 이상이어야 합니다.", ChatRoomTitleNullException.class),
-    CHATROOM_TITLE_LENGTH_EXCEPTION("013", "채팅방 제목은 255자 이하이어야 합니다.", ChatRoomTitleNullException.class),
-    CHATROOM_DESCRIPTION_LENGTH_EXCEPTION("014", "채팅방 소개글은 255자 이하이어야 합니다.", ChatRoomTitleNullException.class),
+    CHATROOM_TITLE_LENGTH_EXCEPTION("013", "채팅방 제목은 255자 이하이어야 합니다.", ChatRoomTitleLengthException.class),
+    CHATROOM_DESCRIPTION_LENGTH_EXCEPTION("014", "채팅방 소개글은 255자 이하이어야 합니다.", ChatRoomDescriptionLengthException.class),
 
     CATEGORY_NULL_EXCEPTION("015", "카테고리를 1개 이상 지정해야 합니다.", CategoryNullException.class),
-    CATEGORY__TITLE_LENGTH_EXCEPTION("016", "카테고리는 20자 이하여야 합니다.", CategoryNullException.class),
+    CATEGORY_TITLE_LENGTH_EXCEPTION("016", "카테고리는 20자 이하여야 합니다.", CategoryNullException.class),
     CATEGORY_NUMBER_EXCEPTION("017", "카테고리는 5개 이하로 지정해야 합니다.", CategoryNullException.class),
+
+    LOGIN_EXCEPTION("018", "입력한 사용자 정보가 옳지 않습니다.", UserLoginException.class),
     ;
 
+    // 각 상수는 해당 예외 상황에 대한 고유한 에러 코드와 에러 메시지, 에외 클래스 타입
     private final String errorCode;
     private final String errorMessage;
     private Class<? extends ApplicationException> type;

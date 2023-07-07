@@ -1,90 +1,97 @@
 package com.chatting.room.chatroom.application;
 
 
+import com.chatting.room.chatroom.domain.Categories;
+import com.chatting.room.chatroom.domain.Category;
 import com.chatting.room.chatroom.domain.ChatRoom;
 
 import com.chatting.room.chatroom.dto.request.CreateChatRoomRequest;
 import com.chatting.room.chatroom.dto.request.UpdateChatRoomRequest;
-import com.chatting.room.chatroom.dto.response.CategoryRespDto;
-import com.chatting.room.chatroom.dto.response.ChatRoomRespDto;
+import com.chatting.room.chatroom.dto.response.CategoryResponse;
+import com.chatting.room.chatroom.dto.response.ChatRoomResponse;
 
+import com.chatting.room.chatroom.execption.ChatRoomDescriptionLengthException;
+import com.chatting.room.chatroom.execption.ChatRoomTitleLengthException;
+import com.chatting.room.chatroom.execption.ChatRoomTitleNullException;
+import com.chatting.room.chatroom.repository.CategoryRepository;
 import com.chatting.room.chatroom.repository.ChatRoomRepository;
 import com.chatting.room.user.domain.User;
+import com.chatting.room.user.exception.UserNotFoundException;
 import com.chatting.room.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
+    private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
 
-    public ChatRoomService(ChatRoomRepository chatRoomRepository, UserRepository userRepository) {
+    public ChatRoomService(ChatRoomRepository chatRoomRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
         this.chatRoomRepository = chatRoomRepository;
+        this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
     }
 
-    public List<ChatRoomRespDto> getChatRooms() {
-        List<ChatRoom> chatRooms = chatRoomRepository.findAll();
-        return convertToDtoList(chatRooms);
-    }
+    private static final int TITLE_LENGTH = 255;
+    private static final int DESCRIPTION_LENGTH = 255;
 
-    public List<ChatRoomRespDto> createChatRooms(List<CreateChatRoomRequest> requests) {
-        List<ChatRoom> chatRooms = new ArrayList<>();
+    @Transactional
+    public ChatRoomResponse createChatRoom(CreateChatRoomRequest request, Long userId) {
+        // for fk
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
 
-        for (CreateChatRoomRequest request : requests) {
-            User user = userRepository.findById(request.getId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+        String title = request.getTitle();
+        String description = request.getDescription();
+        String categoryVal = request.getCategories();
 
-            ChatRoom chatRoom = new ChatRoom(request.getId(), request.getTitle(), request.getDescription(), user);
-            chatRooms.add(chatRoom);
-        }
+        validateTitle(title);
+        validateDescription(description);
+        Categories categories = Categories.toCategory(categoryVal);
 
-        List<ChatRoom> savedChatRooms = chatRoomRepository.saveAll(chatRooms);
-        return convertToDtoList(savedChatRooms);
+        ChatRoom chatRoom = CreateChatRoomRequest.toEntity(request, user);
+
+        ChatRoom saveChatRoom = chatRoomRepository.save(chatRoom);
+        List<Category> savedCategoryList = categoryRepository.saveAll(categories.getCategories());
+
+        return ChatRoomResponse.from(user, saveChatRoom, savedCategoryList);
     }
 
     public void deleteChatRoom(Long chatRoomId) {
         chatRoomRepository.deleteById(chatRoomId);
     }
 
-    public ChatRoomRespDto updateChatRoom(Long chatRoomId, UpdateChatRoomRequest request) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
-
-        // 수정할 필드 업데이트
-        chatRoom.setTitle(request.getTitle());
-        chatRoom.setDescription(request.getDescription());
-
-        // 채팅방 업데이트
-        ChatRoom updatedChatRoom = chatRoomRepository.save(chatRoom);
-
-        return new ChatRoomRespDto(
-                updatedChatRoom.getId(),
-                updatedChatRoom.getTitle(),
-                updatedChatRoom.getDescription(),
-                updatedChatRoom.getUser().getId(),
-                updatedChatRoom.getUser().getUsername(),
-                (List<CategoryRespDto>) updatedChatRoom.getUser()
-        );
+    public ChatRoomResponse updateChatRoom(Long chatRoomId, UpdateChatRoomRequest request) {
+        return null;
     }
 
-    private List<ChatRoomRespDto> convertToDtoList(List<ChatRoom> chatRooms) {
-        return chatRooms.stream()
-                .map(chatRoom -> new ChatRoomRespDto(
-                        chatRoom.getId(),
-                        chatRoom.getTitle(),
-                        chatRoom.getDescription(),
-                        chatRoom.getUser().getId(),
-                        chatRoom.getUser().getUsername(),
-                        (List<CategoryRespDto>) chatRoom.getUser()
+    public List<ChatRoomResponse> chatRoomList() {
+        return null;
+    }
 
-                ))
-                .collect(Collectors.toList());
+    private List<ChatRoomResponse> convertToDtoList(List<ChatRoom> chatRooms) {
+        return null;
+    }
+
+    private void validateTitle(String title) {
+        if (Objects.isNull(title)) {
+            throw new ChatRoomTitleNullException();
+        }
+
+        if (title.length() > TITLE_LENGTH) {
+            throw new ChatRoomTitleLengthException();
+        }
+    }
+
+    private void validateDescription(String description) {
+        if (description.length() > DESCRIPTION_LENGTH) {
+            throw new ChatRoomDescriptionLengthException();
+        }
     }
 }
