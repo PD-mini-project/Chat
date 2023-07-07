@@ -21,13 +21,13 @@ public class ChatRoomController {
         this.chatRoomService = chatRoomService;
     }
 
-    @GetMapping("/api/chatroom")
+    @GetMapping
     public ResponseEntity<List<ChatRoomRespDto>> getChatRooms() {
         List<ChatRoomRespDto> chatRooms = chatRoomService.getChatRooms();
         return ResponseEntity.ok(chatRooms);
     }
 
-    @PostMapping("/api/chatroom")
+    @PostMapping
     public ResponseEntity<List<ChatRoomRespDto>> createChatRooms(@RequestBody List<CreateChatRoomRequest> requests) {
         List<ChatRoomRespDto> createdChatRooms = chatRoomService.createChatRooms(requests);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdChatRooms);

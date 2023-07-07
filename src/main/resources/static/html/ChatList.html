@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="/static/css/chatlist.css">
+    <style>
+        .search input[type="text"]:focus {
+            border-color: #ff9900;
+            box-shadow: 0 0 3px #ff9900;
+        }
+    </style>
+</head>
+<body>
+<div class="chat_list_wrap">
+    <div class="header">
+        PlayTalk
+        <form action="/api/chatroom/{id}" method="post">
+            <input type="hidden" name="_method" value="DELETE">
+            <button title="Button push orange" class="button2 btnPush btnOrange">채팅방 삭제</button>
+        </form>
+        <form action="/api/chatroom" method="post" >
+            <button type="Button push orange" class="button2 btnPush btnOrange">채팅방 생성</button>
+        </form>
+
+        <form action="/logout" method="post">
+            <button type="submit" class="button btnPush btnOrange">Logout</button>
+        </form>
+        <form action="/mypage" method="get">
+            <button type="Button push orange" class="button btnPush btnOrange">MyPage</button>
+        </form>
+    </div>
+    <div class="search">
+        <input type="text" placeholder="검색" />
+    </div>
+    <div class="list">
+        <ul id="chatRoomList">
+        </ul>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // API를 호출하여 채팅방 리스트 데이터를 가져옵니다.
+        function getChatRooms() {
+            $.get('/api/chatroom', function(data) {
+                var chatRoomList = $('#chatRoomList');
+                chatRoomList.empty(); // 기존의 채팅방 리스트를 비웁니다.
+                // 가져온 데이터를 반복하여 채팅방 리스트에 추가합니다.
+                data.forEach(function(chatRoom) {
+                    var listItem = $('<li>');
+                    var table = $('<table cellpadding="0" cellspacing="0">');
+                    var tr = $('<tr>');
+                    var profileTd = $('<td class="profile_td">');
+                    var chatTd = $('<td class="chat_td">');
+                    var idDiv = $('<div class="id">').text(chatRoom.title);
+                    var chatPreviewDiv = $('<div class="chat_preview">').text(chatRoom.description);
+                    var timeTd = $('<td class="time_td">');
+                    var timeDiv = $('<div class="time">').text(chatRoom.createAt);
+
+                    chatTd.append(idDiv);
+                    chatTd.append(chatPreviewDiv);
+                    timeTd.append(timeDiv);
+                    tr.append(profileTd);
+                    tr.append(chatTd);
+                    tr.append(timeTd);
+                    table.append(tr);
+                    listItem.append(table);
+                    chatRoomList.append(listItem);
+                });
+            });
+        }
+
+        // 채팅방 생성 버튼 클릭 시 채팅방 생성 요청을 보냅니다.
+        $('.button2').click(function(e) {
+            e.preventDefault(); // 기본 동작을 막습니다.
+
+            // 채팅방 생성 API를 호출합니다.
+            $.post('/api/chatroom', function() {
+                // 채팅방이 생성되었으므로 채팅방 리스트를 다시 가져옵니다.
+                getChatRooms();
+            });
+        });
+
+        // 초기 채팅방 리스트를 가져옵니다.
+        getChatRooms();
+
+        function enterChatRoom(chatRoomId) {
+            // 채팅방에 들어가는 로직을 구현합니다.
+            // 예: 채팅방 페이지로 리다이렉트하거나 AJAX 호출 등을 사용할 수 있습니다.
+            console.log('Entering chat room: ' + chatRoomId);
+        }
+    });
+</script>
+</body>
+</html>
