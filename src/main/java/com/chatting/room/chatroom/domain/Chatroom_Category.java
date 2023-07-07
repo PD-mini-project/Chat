@@ -14,16 +14,16 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "chatroom_categories")
-public class Chatroom_Categories {
+public class Chatroom_Category {
 
     @EmbeddedId
     private ChatroomCategoriesId id;
 
-    public Chatroom_Categories(Long chatroomId, Long categoryId) {
+    public Chatroom_Category(Long chatroomId, Long categoryId) {
         this.id = new ChatroomCategoriesId(chatroomId, categoryId);
     }
 
-    public Chatroom_Categories(ChatroomCategoriesId id) {
+    public Chatroom_Category(ChatroomCategoriesId id) {
         this.id = id;
     }
 

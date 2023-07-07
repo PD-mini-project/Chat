@@ -5,7 +5,7 @@ use chattingroom;
 DROP TABLE IF EXISTS chat_message;
 DROP TABLE IF EXISTS chatroom_categories;
 DROP TABLE IF EXISTS chat_room;
-DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS user;
 
 create table user (
@@ -28,16 +28,16 @@ create table chatroom (
     foreign key (user_id) references user (id)
 ) engine=InnoDB;
 
-create table categories (
+create table category (
     id bigint AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(20) NOT NULL
 ) engine=InnoDB;
 
-create table chatroom_categories (
+create table chatroom_category (
     chatroom_id bigint,
     category_id bigint,
     FOREIGN KEY (chatroom_id) REFERENCES chatroom(id),
-    FOREIGN KEY (category_id) REFERENCES categories(id),
+    FOREIGN KEY (category_id) REFERENCES category(id),
     PRIMARY KEY (chatroom_id, category_id)
 ) engine=InnoDB;
 

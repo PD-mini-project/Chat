@@ -2,9 +2,9 @@ package com.chatting.room.chatroom.api;
 
 import com.chatting.room.chatroom.application.ChatRoomService;
 import com.chatting.room.chatroom.dto.request.CreateChatRoomRequest;
-
 import com.chatting.room.chatroom.dto.request.UpdateChatRoomRequest;
-import com.chatting.room.chatroom.dto.response.ChatRoomRespDto;
+import com.chatting.room.chatroom.dto.response.ChatRoomResponse;
+import com.chatting.room.common.aop.LoginUserId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,28 +21,31 @@ public class ChatRoomController {
         this.chatRoomService = chatRoomService;
     }
 
-    @GetMapping("/api/chatroom")
-    public ResponseEntity<List<ChatRoomRespDto>> getChatRooms() {
-        List<ChatRoomRespDto> chatRooms = chatRoomService.getChatRooms();
-        return ResponseEntity.ok(chatRooms);
+    @PostMapping("/create")
+    public ResponseEntity<ChatRoomResponse> createChatRoom(
+            @RequestBody CreateChatRoomRequest request,
+            @LoginUserId Long userId) {
+
+        ChatRoomResponse response = chatRoomService.createChatRoom(request, userId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/api/chatroom")
-    public ResponseEntity<List<ChatRoomRespDto>> createChatRooms(@RequestBody List<CreateChatRoomRequest> requests) {
-        List<ChatRoomRespDto> createdChatRooms = chatRoomService.createChatRooms(requests);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdChatRooms);
-    }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteChatRoom(@PathVariable("id")Long chatRoomId){
         chatRoomService.deleteChatRoom(chatRoomId);
         return ResponseEntity.noContent().build();
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<List<ChatRoomRespDto>> updateChatRoom(
+    @PutMapping("/update/{id}")
+    public ResponseEntity<List<ChatRoomResponse>> updateChatRoom(
             @PathVariable("id") Long chatRoomId,
             @RequestBody UpdateChatRoomRequest request) {
-        ChatRoomRespDto updatedChatRoom = chatRoomService.updateChatRoom(chatRoomId, request);
+        ChatRoomResponse updatedChatRoom = chatRoomService.updateChatRoom(chatRoomId, request);
         return ResponseEntity.ok(Collections.singletonList(updatedChatRoom));
+    }
+
+    @GetMapping("/chatrooms")
+    public ResponseEntity<List<ChatRoomResponse>> chatRoomList(@PathVariable Long id) {
+        return null;
     }
 }

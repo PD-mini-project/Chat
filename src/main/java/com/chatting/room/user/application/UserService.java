@@ -1,7 +1,7 @@
 package com.chatting.room.user.application;
 
 import com.chatting.room.common.exception.UnAuthorizedException;
-import com.chatting.room.common.redis.RedisService;
+import com.chatting.room.common.redis.RedisSessionService;
 import com.chatting.room.user.domain.User;
 import com.chatting.room.user.dto.request.UserLoginRequest;
 import com.chatting.room.user.dto.request.UserCreateRequest;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -23,11 +22,11 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final RedisService redisService;
+    private final RedisSessionService redisSessionService;
 
-    public UserService(UserRepository userRepository, com.chatting.room.common.redis.RedisService redisService) {
+    public UserService(UserRepository userRepository, RedisSessionService redisSessionService) {
         this.userRepository = userRepository;
-        this.redisService = redisService;
+        this.redisSessionService = redisSessionService;
     }
 
     private static final int USERNAME_LENGTH = 20;
@@ -60,8 +59,8 @@ public class UserService {
 
         user.isSameUsernameAndPassword(username, password);
 
-        // Redis에 사용자 정보 저장
-        redisService.saveUserInfo(user.getId().toString(), Map.of("id", user.getId(), "username", user.getUsername()));
+        // Redis Session에 사용자 정보 저장
+        redisSessionService.saveUserInfo(user.getId().toString());
 
         return UserResponse.from(user);
     }

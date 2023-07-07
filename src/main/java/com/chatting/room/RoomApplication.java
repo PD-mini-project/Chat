@@ -6,7 +6,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 
 @SpringBootApplication
 // for session redis
-//@EnableRedisHttpSession
+@EnableRedisHttpSession
 public class RoomApplication {
 
     public static void main(String[] args) {
