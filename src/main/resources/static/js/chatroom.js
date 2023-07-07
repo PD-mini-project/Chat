@@ -1,99 +1,75 @@
+const Chat = (function(){
+    const myName = "blue";
 
-function renderChatRooms(chatRooms) {
-    var chatRoomList = document.getElementById('chat-room-list');
-    chatRoomList.innerHTML = ''; // Clear the existing list
+    // init 함수
+    function init() {
+        // enter 키 이벤트
+        $(document).on('keydown', 'div.input-div textarea', function(e){
+            if(e.keyCode == 13 && !e.shiftKey) {
+                e.preventDefault();
+                const message = $(this).val();
 
-    chatRooms.forEach(function (chatRoom) {
-        var chatRoomItem = document.createElement('li');
-        chatRoomItem.textContent = chatRoom.title;
-        chatRoomList.appendChild(chatRoomItem);
-    });
-}
-
-// Fetch chat rooms and render them
-fetch('/api/chatroom')
-    .then(function (response) {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('Error: ' + response.status);
-        }
-    })
-    .then(function (data) {
-        // Render chat rooms
-        renderChatRooms(data);
-    })
-    .catch(function (error) {
-        console.error('Error:', error);
-    });
-
-// Submit event handler for the create chat room form
-document.getElementById('create-chat-room-form').addEventListener('submit', function (event) {
-    event.preventDefault();
-
-    var titleInput = document.getElementById('title-input');
-    var descriptionInput = document.getElementById('description-input');
-
-    var title = titleInput.value;
-    var description = descriptionInput.value;
-
-    // Call the createChatRoom function
-    createChatRoom(title, description);
-
-    // Reset the input fields
-    titleInput.value = '';
-    descriptionInput.value = '';
-});
-
-// Click event handler for the delete chat room button
-document.getElementById('delete-chat-room-button').addEventListener('click', function () {
-    var chatRoomId = // Get the selected chat room ID
-
-        // Call the deleteChatRoom function
-        deleteChatRoom(chatRoomId);
-});
-
-// Function to create a chat room
-function createChatRoom(title, description) {
-    fetch('/api/chatroom', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            title: title,
-            description: description
-        })
-    })
-        .then(function (response) {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Error: ' + response.status);
+                // 메시지 전송
+                sendMessage(message);
+                // 입력창 clear
+                clearTextarea();
             }
-        })
-        .then(function (data) {
-            console.log(data);
-            // Handle the created chat room data
-        })
-        .catch(function (error) {
-            console.error('Error:', error);
         });
-}
+    }
+    
 
-// Function to delete a chat room
-function deleteChatRoom(chatRoomId) {
-    fetch('/api/chatroom/' + chatRoomId, {
-        method: 'DELETE'
-    })
-        .then(function (response) {
-            if (response.ok) {
-                console.log('Chat room deleted');
-            } else {
-                throw new Error('Error: ' + response.status);
-            }
-        })
-        .catch(function (error) {
-            console.error('Error:', error);
-        });
-}
+
+    // 메세지 태그 생성
+    function createMessageTag(LR_className, senderName, message) {
+        // 형식 가져오기
+        let chatLi = $('div.chat.format ul li').clone();
+
+        // 값 채우기
+        chatLi.addClass(LR_className);
+        chatLi.find('.sender span').text(senderName);
+        chatLi.find('.message span').text(message);
+
+        return chatLi;
+    }
+
+    // 메세지 태그 append
+    function appendMessageTag(LR_className, senderName, message) {
+        const chatLi = createMessageTag(LR_className, senderName, message);
+
+        $('div.chat:not(.format) ul').append(chatLi);
+
+        // 스크롤바 아래 고정
+        $('div.chat').scrollTop($('div.chat').prop('scrollHeight'));
+    }
+
+    // 메세지 전송
+    function sendMessage(message) {
+        // 서버에 전송하는 코드로 후에 대체
+        const data = {
+            "senderName"    : "blue",
+            "message"        : message
+        };
+
+        // 통신하는 기능이 없으므로 여기서 receive
+        resive(data);
+    }
+
+    // 메세지 입력박스 내용 지우기
+    function clearTextarea() {
+        $('div.input-div textarea').val('');
+    }
+
+    // 메세지 수신
+    function resive(data) {
+        const LR = (data.senderName != myName)? "left" : "right";
+        appendMessageTag("right", data.senderName, data.message);
+    }
+
+    return {
+        'init': init
+    };
+})();
+
+$(function(){
+    Chat.init();
+});
