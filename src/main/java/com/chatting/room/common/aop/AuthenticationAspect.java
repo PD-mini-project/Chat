@@ -15,9 +15,9 @@ public class AuthenticationAspect {
         this.authService = authService;
     }
 
-    @Before("@annotation(com.chatting.room.common.aop.Authentication) && args(paramId, .., loginId)")
-    public void authorizeMaster(Long paramId, Long loginId) {
-        if (!authService.isAuthor(paramId, loginId)) {
+    @Before(value = "@annotation(com.chatting.room.common.aop.Authentication) && args(chatRoomId, .., userId)", argNames = "chatRoomId, userId")
+    public void authorizeMaster(Long chatRoomId, Long userId) {
+        if (!authService.isAuthor(chatRoomId, userId)) {
             throw new UnAuthorizedException();
         }
     }

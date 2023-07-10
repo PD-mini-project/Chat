@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 @Validated
 public class UserController {
 
@@ -64,7 +64,7 @@ public class UserController {
     }
 
     // 권한 인증 애노테이션 필요 @Authentication
-    @GetMapping("/users")
+    @GetMapping
     public ResponseEntity<List<UserResponse>> getUserList() {
         List<UserResponse> userList = userService.getUserList();
 
