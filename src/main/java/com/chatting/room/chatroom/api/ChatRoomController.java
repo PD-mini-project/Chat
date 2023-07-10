@@ -4,6 +4,7 @@ import com.chatting.room.chatroom.application.ChatRoomService;
 import com.chatting.room.chatroom.dto.request.CreateChatRoomRequest;
 import com.chatting.room.chatroom.dto.request.UpdateChatRoomRequest;
 import com.chatting.room.chatroom.dto.response.ChatRoomResponse;
+import com.chatting.room.common.aop.Authentication;
 import com.chatting.room.common.aop.LoginUserId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class ChatRoomController {
     public ChatRoomController(ChatRoomService chatRoomService) {
         this.chatRoomService = chatRoomService;
     }
-  
+
     @PostMapping("/create")
     public ResponseEntity<ChatRoomResponse> createChatRoom(
             @RequestBody CreateChatRoomRequest request,
@@ -31,12 +32,14 @@ public class ChatRoomController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // 권한 검증
+    @Authentication
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteChatRoom(@PathVariable("id")Long chatRoomId){
+    public ResponseEntity<Void> deleteChatRoom(@PathVariable("id") Long chatRoomId) {
         chatRoomService.deleteChatRoom(chatRoomId);
         return ResponseEntity.noContent().build();
     }
-  
+
     @PutMapping("/update/{id}")
     public ResponseEntity<List<ChatRoomResponse>> updateChatRoom(
             @PathVariable("id") Long chatRoomId,
